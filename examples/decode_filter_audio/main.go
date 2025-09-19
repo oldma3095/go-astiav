@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 const (
@@ -178,7 +178,7 @@ func openInputFile(filename string) error {
 
 	// Get a pointer to the codec context for the audio stream
 	stream := formatContext.Streams()[audioStreamIndex]
-	
+
 	// Find decoder for the stream
 	codec := astiav.FindDecoder(stream.CodecParameters().CodecID())
 	if codec == nil {
@@ -206,7 +206,7 @@ func openInputFile(filename string) error {
 
 func initFilters(filtersDescr string) error {
 	var err error
-	
+
 	// Create filter graph
 	filterGraph = astiav.AllocFilterGraph()
 	if filterGraph == nil {
@@ -307,8 +307,8 @@ func initFilters(filtersDescr string) error {
 func printFrame(frame *astiav.Frame) {
 	nbSamples := frame.NbSamples()
 	channels := frame.ChannelLayout().Channels()
-	
-	fmt.Printf("nb_samples:%d pts:%d\n", 
+
+	fmt.Printf("nb_samples:%d pts:%d\n",
 		nbSamples, frame.Pts())
 
 	// Print sample data (first few samples for demonstration)

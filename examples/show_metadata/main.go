@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 func main() {

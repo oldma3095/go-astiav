@@ -8,14 +8,14 @@ import (
 	"math"
 	"strings"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 const (
-	InputSampleRate     = 48000
-	InputFormat         = astiav.SampleFormatFltp
-	VolumeVal           = 0.90
-	FrameSize           = 1024
+	InputSampleRate = 48000
+	InputFormat     = astiav.SampleFormatFltp
+	VolumeVal       = 0.90
+	FrameSize       = 1024
 )
 
 var (
@@ -123,20 +123,20 @@ func initFilterGraph() (*astiav.FilterGraph, *astiav.BuffersrcFilterContext, *as
 	// Set the filter options through the AVOptions API
 	channelLayout := astiav.ChannelLayout5Point0
 	chLayoutStr := channelLayout.String()
-	
+
 	if err := abufferCtx.FilterContext().SetOption("channel_layout", chLayoutStr); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not set channel_layout: %w", err)
 	}
-	
+
 	if err := abufferCtx.FilterContext().SetOption("sample_fmt", InputFormat.Name()); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not set sample_fmt: %w", err)
 	}
-	
+
 	timeBase := astiav.NewRational(1, InputSampleRate)
 	if err := abufferCtx.FilterContext().SetOption("time_base", timeBase.String()); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not set time_base: %w", err)
 	}
-	
+
 	if err := abufferCtx.FilterContext().SetOption("sample_rate", fmt.Sprintf("%d", InputSampleRate)); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not set sample_rate: %w", err)
 	}
@@ -161,7 +161,7 @@ func initFilterGraph() (*astiav.FilterGraph, *astiav.BuffersrcFilterContext, *as
 	dict := astiav.NewDictionary()
 	defer dict.Free()
 	dict.Set("volume", fmt.Sprintf("%.2f", VolumeVal), astiav.NewDictionaryFlags())
-	
+
 	if err := volumeCtx.Initialize(dict); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not initialize the volume filter: %w", err)
 	}
@@ -183,7 +183,7 @@ func initFilterGraph() (*astiav.FilterGraph, *astiav.BuffersrcFilterContext, *as
 	aformatDict.Set("sample_fmts", InputFormat.Name(), astiav.NewDictionaryFlags())
 	aformatDict.Set("sample_rates", fmt.Sprintf("%d", InputSampleRate), astiav.NewDictionaryFlags())
 	aformatDict.Set("channel_layouts", chLayoutStr, astiav.NewDictionaryFlags())
-	
+
 	if err := aformatCtx.Initialize(aformatDict); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not initialize the aformat filter: %w", err)
 	}
@@ -205,7 +205,7 @@ func initFilterGraph() (*astiav.FilterGraph, *astiav.BuffersrcFilterContext, *as
 
 	// Connect the filters manually like in FFmpeg C code
 	// abuffer -> volume -> aformat -> abuffersink
-	
+
 	// Connect abuffer to volume
 	if err := graph.Link(abufferCtx.FilterContext(), 0, volumeCtx, 0); err != nil {
 		return nil, nil, nil, fmt.Errorf("could not link abuffer to volume: %w", err)

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 const (
@@ -25,7 +25,7 @@ var (
 	buffersinkCtx    *astiav.BuffersinkFilterContext
 	buffersrcCtx     *astiav.BuffersrcFilterContext
 	filterGraph      *astiav.FilterGraph
-	videoStreamIndex = -1
+	videoStreamIndex       = -1
 	lastPts          int64 = astiav.NoPtsValue
 )
 

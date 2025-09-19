@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 const (
@@ -484,7 +484,7 @@ func closeStream(ost *OutputStream) {
 	if ost == nil {
 		return
 	}
-	
+
 	// 完全按照FFmpeg C代码：avcodec_free_context(&ost->enc);
 	if ost.enc != nil {
 		ost.enc.Free()

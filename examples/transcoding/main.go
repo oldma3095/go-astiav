@@ -7,8 +7,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/asticode/go-astiav"
 	"github.com/asticode/go-astikit"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (
@@ -31,11 +31,11 @@ type StreamContext struct {
 }
 
 var (
-	ifmtCtx    *astiav.FormatContext
-	ofmtCtx    *astiav.FormatContext
-	filterCtx  []*FilteringContext
-	streamCtx  []*StreamContext
-	c          = astikit.NewCloser()
+	ifmtCtx   *astiav.FormatContext
+	ofmtCtx   *astiav.FormatContext
+	filterCtx []*FilteringContext
+	streamCtx []*StreamContext
+	c         = astikit.NewCloser()
 )
 
 func main() {
@@ -111,7 +111,7 @@ func openInputFile(filename string) error {
 	// Process each stream
 	for i, stream := range ifmtCtx.Streams() {
 		codecPar := stream.CodecParameters()
-		
+
 		// Find decoder
 		dec := astiav.FindDecoder(codecPar.CodecID())
 		if dec == nil {
@@ -207,14 +207,14 @@ func openOutputFile(filename string) error {
 				encCtx.SetHeight(decCtx.Height())
 				encCtx.SetWidth(decCtx.Width())
 				encCtx.SetSampleAspectRatio(decCtx.SampleAspectRatio())
-				
+
 				// Use decoder's pixel format or a safe default
 				if decCtx.PixelFormat() != astiav.PixelFormatNone {
 					encCtx.SetPixelFormat(decCtx.PixelFormat())
 				} else {
 					encCtx.SetPixelFormat(astiav.PixelFormatYuv420P)
 				}
-				
+
 				// Set time base
 				if decCtx.Framerate().Num() > 0 {
 					encCtx.SetTimeBase(decCtx.Framerate().Invert())
@@ -224,14 +224,14 @@ func openOutputFile(filename string) error {
 			} else { // Audio
 				encCtx.SetSampleRate(decCtx.SampleRate())
 				encCtx.SetChannelLayout(decCtx.ChannelLayout())
-				
+
 				// Use decoder's sample format or a safe default
 				if decCtx.SampleFormat() != astiav.SampleFormatNone {
 					encCtx.SetSampleFormat(decCtx.SampleFormat())
 				} else {
 					encCtx.SetSampleFormat(astiav.SampleFormatFltp)
 				}
-				
+
 				encCtx.SetTimeBase(astiav.NewRational(1, encCtx.SampleRate()))
 			}
 
@@ -289,7 +289,7 @@ func initFilters() error {
 
 	for i, stream := range ifmtCtx.Streams() {
 		codecPar := stream.CodecParameters()
-		
+
 		// Only initialize filters for video and audio streams that need encoding
 		if codecPar.MediaType() != astiav.MediaTypeVideo && codecPar.MediaType() != astiav.MediaTypeAudio {
 			continue
@@ -300,7 +300,7 @@ func initFilters() error {
 		}
 
 		filterCtx[i] = &FilteringContext{}
-		
+
 		// Allocate filter graph
 		filterGraph := astiav.AllocFilterGraph()
 		if filterGraph == nil {
@@ -323,7 +323,7 @@ func initFilters() error {
 		// Allocate packet and frame for filtering
 		filterCtx[i].encPkt = astiav.AllocPacket()
 		c.Add(filterCtx[i].encPkt.Free)
-		
+
 		filterCtx[i].filteredFrame = astiav.AllocFrame()
 		c.Add(filterCtx[i].filteredFrame.Free)
 	}
@@ -462,7 +462,7 @@ func processPackets() error {
 
 func decodeAndEncode(pkt *astiav.Packet, streamIndex int) error {
 	sctx := streamCtx[streamIndex]
-	
+
 	// Send packet to decoder
 	if err := sctx.decCtx.SendPacket(pkt); err != nil {
 		return fmt.Errorf("sending packet to decoder failed: %w", err)
@@ -546,11 +546,11 @@ func encodeWriteFrame(frame *astiav.Frame, streamIndex int, gotFrame *bool) erro
 
 		// Prepare packet for muxing
 		fctx.encPkt.SetStreamIndex(streamIndex)
-		
+
 		// Rescale timestamps
 		inTimeBase := streamCtx[streamIndex].decCtx.TimeBase()
 		outTimeBase := ofmtCtx.Streams()[streamIndex].TimeBase()
-		
+
 		fctx.encPkt.RescaleTs(inTimeBase, outTimeBase)
 
 		// Write packet
@@ -570,7 +570,7 @@ func encodeWriteFrame(frame *astiav.Frame, streamIndex int, gotFrame *bool) erro
 
 func flushDecoderEncoder(streamIndex int) error {
 	sctx := streamCtx[streamIndex]
-	
+
 	if sctx.decCtx.MediaType() == astiav.MediaTypeVideo || sctx.decCtx.MediaType() == astiav.MediaTypeAudio {
 		// Flush decoder
 		if err := sctx.decCtx.SendPacket(nil); err != nil {

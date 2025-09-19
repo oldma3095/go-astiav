@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (

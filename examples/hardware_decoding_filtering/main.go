@@ -7,20 +7,20 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asticode/go-astiav"
 	"github.com/asticode/go-astikit"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (
-	hwDeviceCtx     *astiav.HardwareDeviceContext
-	hwPixFmt        astiav.PixelFormat
-	outputFile      *os.File
-	c               = astikit.NewCloser()
-	
+	hwDeviceCtx *astiav.HardwareDeviceContext
+	hwPixFmt    astiav.PixelFormat
+	outputFile  *os.File
+	c           = astikit.NewCloser()
+
 	// Filter related variables
-	buffersinkCtx   *astiav.BuffersinkFilterContext
-	buffersrcCtx    *astiav.BuffersrcFilterContext
-	filterGraph     *astiav.FilterGraph
+	buffersinkCtx    *astiav.BuffersinkFilterContext
+	buffersrcCtx     *astiav.BuffersrcFilterContext
+	filterGraph      *astiav.FilterGraph
 	videoStreamIndex int
 )
 
@@ -33,7 +33,7 @@ func hwDecoderInit(ctx *astiav.CodecContext, hwType astiav.HardwareDeviceType) e
 	if hwType == astiav.HardwareDeviceTypeVAAPI {
 		devicePath = "/dev/dri/renderD128"
 	}
-	
+
 	hwDeviceCtx, err = astiav.CreateHardwareDeviceContext(hwType, devicePath, nil, 0)
 	if err != nil && hwType == astiav.HardwareDeviceTypeVAAPI {
 		// 如果默认设备失败，尝试空路径
@@ -42,7 +42,7 @@ func hwDecoderInit(ctx *astiav.CodecContext, hwType astiav.HardwareDeviceType) e
 	if err != nil {
 		return fmt.Errorf("failed to create specified HW device: %w", err)
 	}
-	
+
 	ctx.SetHardwareDeviceContext(hwDeviceCtx)
 	return nil
 }
@@ -53,7 +53,7 @@ func getHwFormat(pixFmts []astiav.PixelFormat) astiav.PixelFormat {
 			return pf
 		}
 	}
-	
+
 	log.Println("Failed to get HW surface format")
 	return astiav.PixelFormatNone
 }
@@ -190,7 +190,7 @@ func filterFrame(frame *astiav.Frame) error {
 
 func displayFrame(frame *astiav.Frame) error {
 	var outputFrame *astiav.Frame
-	
+
 	// Check if this is a hardware frame that needs to be transferred to system memory
 	if frame.HardwareFramesContext() != nil {
 		// Create a software frame for transfer
@@ -199,12 +199,12 @@ func displayFrame(frame *astiav.Frame) error {
 			return errors.New("cannot allocate software frame")
 		}
 		defer swFrame.Free()
-		
+
 		// Transfer data from hardware frame to software frame
 		if err := frame.TransferHardwareData(swFrame); err != nil {
 			return fmt.Errorf("error transferring hardware frame to system memory: %w", err)
 		}
-		
+
 		outputFrame = swFrame
 	} else {
 		outputFrame = frame
@@ -326,7 +326,7 @@ func main() {
 		log.Fatal("Failed to allocate format context")
 	}
 	c.Add(inputCtx.Free)
-	
+
 	if err := inputCtx.OpenInput(inputFile, nil, nil); err != nil {
 		log.Fatalf("Cannot open input file '%s': %v", inputFile, err)
 	}
@@ -425,7 +425,7 @@ func main() {
 			if err := decodeWrite(decoderCtx, packet, inputCtx); err != nil {
 				log.Fatalf("Error in decode_write: %v", err)
 			}
-		} 
+		}
 
 		packet.Unref()
 	}

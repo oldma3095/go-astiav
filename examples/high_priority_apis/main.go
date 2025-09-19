@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 func main() {
@@ -309,7 +309,7 @@ func demonstrateAudioFrameAPIs() {
 	nbChannels := 2
 	sampleFormat := astiav.SampleFormatS16
 	nbSamples := 1024
-	
+
 	frame.SetNbSamples(nbSamples)
 	frame.SetSampleFormat(sampleFormat)
 	frame.SetChannelLayout(astiav.ChannelLayoutStereo)
@@ -424,8 +424,8 @@ func demonstrateVideoToolboxEncoder(codec *astiav.Codec) {
 	codecCtx.SetTimeBase(astiav.NewRational(1, 25))
 	codecCtx.SetBitRate(5000000) // 5Mbps
 
-	fmt.Printf("✓ 设置VideoToolbox编码器参数: %dx%d, %s, %d bps\n", 
-		codecCtx.Width(), codecCtx.Height(), 
+	fmt.Printf("✓ 设置VideoToolbox编码器参数: %dx%d, %s, %d bps\n",
+		codecCtx.Width(), codecCtx.Height(),
 		codecCtx.PixelFormat().String(), codecCtx.BitRate())
 
 	// 尝试打开VideoToolbox编码器
@@ -467,7 +467,7 @@ func demonstrateExecuteAPIs() {
 	// 这些API主要用于内部多线程处理，在实际应用中由FFmpeg内部调用
 	fmt.Printf("✓ avcodec_default_execute: API可用，用于内部多线程处理\n")
 	fmt.Printf("✓ avcodec_default_execute2: API可用，用于高级多线程处理\n")
-	
+
 	// 显示线程相关信息
 	fmt.Printf("✓ 编解码器线程类型支持: 可配置多线程解码\n")
 }
@@ -561,8 +561,8 @@ func demonstrateMathematicsAPIs() {
 	fmt.Println("\n--- 数学和时间API演示 ---")
 
 	// 测试时间基转换
-	timebase1 := astiav.NewRational(1, 25)  // 25fps
-	timebase2 := astiav.NewRational(1, 30)  // 30fps
+	timebase1 := astiav.NewRational(1, 25) // 25fps
+	timebase2 := astiav.NewRational(1, 30) // 30fps
 	timestamp := int64(100)
 
 	rescaled := astiav.RescaleQ(timestamp, timebase1, timebase2)
@@ -647,7 +647,7 @@ func demonstrateNetworkAPIs() {
 		fmt.Printf("⚠ avio_open2 失败: %v (正常，测试文件不存在)\n", err)
 	} else {
 		fmt.Printf("✓ avio_open2: 成功打开IO上下文\n")
-		
+
 		// 测试IO上下文关闭
 		err = ioCtx.Close()
 		if err != nil {
@@ -711,7 +711,7 @@ func demonstrateMetadataAPIs() {
 		fmt.Printf("⚠ av_dict_copy 失败: %v\n", err)
 	} else {
 		fmt.Printf("✓ av_dict_copy: 字典复制成功\n")
-		
+
 		// 验证复制结果
 		entry = dstDict.Get("title", nil, 0)
 		if entry != nil {
@@ -728,7 +728,7 @@ func demonstrateMetadataAPIs() {
 		fmt.Printf("⚠ av_dict_parse_string 失败: %v\n", err)
 	} else {
 		fmt.Printf("✓ av_dict_parse_string: 字符串解析成功\n")
-		
+
 		entry = parseDict.Get("key1", nil, 0)
 		if entry != nil {
 			fmt.Printf("✓ 解析验证: key1=%s\n", entry.Value())
@@ -834,9 +834,9 @@ func demonstrateOptionAPIs() {
 	codecCtx.SetHeight(1080)
 	codecCtx.SetPixelFormat(astiav.PixelFormatYuv420P)
 	codecCtx.SetTimeBase(astiav.NewRational(1, 25))
-	
+
 	fmt.Printf("✓ 编解码器选项设置: 分辨率=%dx%d, 像素格式=%s, 时间基=%s\n",
-		codecCtx.Width(), codecCtx.Height(), 
+		codecCtx.Width(), codecCtx.Height(),
 		codecCtx.PixelFormat().String(),
 		codecCtx.TimeBase().String())
 }
@@ -901,10 +901,10 @@ func demonstrateFilterManagementAPIs() {
 	if filterGraph != nil {
 		defer filterGraph.Free()
 		fmt.Printf("✓ 创建滤镜图成功，可以用于复杂的滤镜操作\n")
-		
+
 		// 测试"已实现但可能需要完善"的接口
 		fmt.Println("\n--- 测试已实现的滤镜接口 ---")
-		
+
 		// 测试avfilter_graph_create_filter
 		if scaleFilter != nil {
 			filterCtx, err := filterGraph.CreateFilter(scaleFilter, "scale_test", "640:480")
@@ -912,7 +912,7 @@ func demonstrateFilterManagementAPIs() {
 				fmt.Printf("⚠ avfilter_graph_create_filter 失败: %v\n", err)
 			} else {
 				fmt.Printf("✓ avfilter_graph_create_filter: 成功创建scale滤镜上下文\n")
-				
+
 				// 测试avfilter_process_command
 				response, err := filterCtx.ProcessCommand("size", "320:240", 0)
 				if err != nil {
@@ -922,7 +922,7 @@ func demonstrateFilterManagementAPIs() {
 				}
 			}
 		}
-		
+
 		// 测试avfilter_graph_queue_command
 		err := filterGraph.QueueCommand("scale_test", "size", "800:600", 0, 1.0)
 		if err != nil {
@@ -930,7 +930,7 @@ func demonstrateFilterManagementAPIs() {
 		} else {
 			fmt.Printf("✓ avfilter_graph_queue_command: 成功队列命令\n")
 		}
-		
+
 		// 测试avfilter_graph_request_oldest
 		err = filterGraph.RequestOldest()
 		if err != nil {
@@ -1003,7 +1003,6 @@ func demonstrateMemoryManagementAPIs() {
 	}
 }
 
-
 func demonstrateEnhancedAPIs() {
 	fmt.Println("\n--- 新增强API演示 ---")
 
@@ -1014,24 +1013,24 @@ func demonstrateEnhancedAPIs() {
 		codecCtx := astiav.AllocCodecContext(codec)
 		if codecCtx != nil {
 			defer codecCtx.Free()
-			
+
 			// 设置基本参数
 			codecCtx.SetWidth(1920)
 			codecCtx.SetHeight(1080)
 			codecCtx.SetPixelFormat(astiav.PixelFormatYuv420P)
-			
+
 			err := codecCtx.Open(codec, nil)
 			if err == nil {
 				// 测试刷新缓冲区
 				codecCtx.FlushBuffers()
 				fmt.Printf("✓ avcodec_flush_buffers: 成功刷新编解码器缓冲区\n")
-				
+
 				// 测试编解码器字符串描述
 				codecStr := codecCtx.CodecString(true)
 				if codecStr != "" {
 					fmt.Printf("✓ avcodec_string: %s\n", codecStr[:min(len(codecStr), 80)])
 				}
-				
+
 				// 测试音频帧时长计算
 				duration := codecCtx.GetAudioFrameDuration(1024)
 				fmt.Printf("✓ av_get_audio_frame_duration: 1024字节音频帧时长=%d\n", duration)
@@ -1047,7 +1046,7 @@ func demonstrateNewlyImplementedAPIs() {
 	fmt.Println("\n--- 快速内存管理API ---")
 	var ptr unsafe.Pointer
 	var size uint = 0
-	
+
 	// 测试快速填充内存分配
 	astiav.FastPaddedMalloc(unsafe.Pointer(&ptr), &size, 1024)
 	if ptr != nil {
@@ -1069,7 +1068,7 @@ func demonstrateNewlyImplementedAPIs() {
 
 	// 2. 演示格式处理增强API
 	fmt.Println("\n--- 格式处理增强API ---")
-	
+
 	// 演示SeekFile和QueueAttachedPictures API存在性
 	fmt.Printf("✓ avformat_seek_file: API已实现并可用\n")
 	fmt.Printf("✓ avformat_queue_attached_pictures: API已实现并可用\n")
@@ -1080,7 +1079,7 @@ func demonstrateNewlyImplementedAPIs() {
 	filterGraph := astiav.AllocFilterGraph()
 	if filterGraph != nil {
 		defer filterGraph.Free()
-		
+
 		// 测试设置自动转换
 		filterGraph.SetAutoConvert(0)
 		fmt.Printf("✓ avfilter_graph_set_auto_convert: 成功设置自动转换标志\n")
@@ -1088,7 +1087,7 @@ func demonstrateNewlyImplementedAPIs() {
 
 	// 4. 演示IO工具API
 	fmt.Println("\n--- IO工具API ---")
-	
+
 	// 测试协议名称查找
 	protocolName := astiav.AvioFindProtocolName("http://example.com/video.mp4")
 	if protocolName != "" {
@@ -1108,7 +1107,7 @@ func demonstrateNewlyImplementedAPIs() {
 	inputProtocols := astiav.AvioEnum(false)
 	outputProtocols := astiav.AvioEnum(true)
 	fmt.Printf("✓ avio_enum_protocols: 输入协议数量=%d, 输出协议数量=%d\n", len(inputProtocols), len(outputProtocols))
-	
+
 	if len(inputProtocols) > 0 {
 		fmt.Printf("  输入协议示例: %s\n", inputProtocols[0])
 	}
@@ -1118,16 +1117,16 @@ func demonstrateNewlyImplementedAPIs() {
 
 	// 5. 演示音频帧时长计算API
 	fmt.Println("\n--- 音频帧时长计算API ---")
-	
+
 	// 创建音频编解码器参数
 	codecParams := astiav.AllocCodecParameters()
 	if codecParams != nil {
 		defer codecParams.Free()
-		
+
 		codecParams.SetCodecID(astiav.CodecIDAac)
 		codecParams.SetSampleRate(44100)
 		codecParams.SetChannelLayout(astiav.ChannelLayoutStereo)
-		
+
 		// 测试从参数计算音频帧时长
 		duration2 := astiav.GetAudioFrameDuration2(codecParams, 1024)
 		fmt.Printf("✓ av_get_audio_frame_duration2: AAC 1024字节帧时长=%d\n", duration2)

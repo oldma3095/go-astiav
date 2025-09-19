@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/asticode/go-astiav"
 	"github.com/asticode/go-astikit"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (

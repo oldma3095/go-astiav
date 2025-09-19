@@ -1,8 +1,8 @@
 /*
  * Hardware-accelerated transcoding example
- * 
+ *
  * Go implementation combining FFmpeg's vaapi_transcode.c and hw_decode.c examples
- * 
+ *
  * This example demonstrates hardware-accelerated video transcoding
  * using hardware decoding and encoding with various hardware acceleration APIs.
  */
@@ -17,7 +17,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (
@@ -33,28 +33,28 @@ type HWTranscodeContext struct {
 	inputFormatCtx *astiav.FormatContext
 	decoderCtx     *astiav.CodecContext
 	videoStreamIdx int
-	
-	// Output context  
+
+	// Output context
 	outputFormatCtx *astiav.FormatContext
 	encoderCtx      *astiav.CodecContext
 	outputStream    *astiav.Stream
-	
+
 	// Hardware context
 	hwDeviceCtx *astiav.HardwareDeviceContext
 	hwPixFmt    astiav.PixelFormat
-	
+
 	// Hardware filter context
 	filterGraph       *astiav.FilterGraph
 	buffersrcCtx      *astiav.BuffersrcFilterContext
 	buffersinkCtx     *astiav.BuffersinkFilterContext
 	hwFramesCtx       *astiav.HardwareFramesContext
 	useHardwareFilter bool
-	
+
 	// Working frames and packets
-	packet       *astiav.Packet
-	frame        *astiav.Frame
-	hwFrame      *astiav.Frame
-	swFrame      *astiav.Frame
+	packet        *astiav.Packet
+	frame         *astiav.Frame
+	hwFrame       *astiav.Frame
+	swFrame       *astiav.Frame
 	filteredFrame *astiav.Frame
 }
 
@@ -93,7 +93,7 @@ func main() {
 		fmt.Printf("  # NVENC with hardware scaling\n")
 		fmt.Printf("  %s -i input.mp4 -o output.mp4 -hwtype cuda -c h264_nvenc -filter 'scale_cuda=1280:720'\n", os.Args[0])
 		fmt.Printf("\nAvailable hardware device types:\n")
-		
+
 		// 显示可用的硬件设备类型
 		fmt.Printf("  - videotoolbox (macOS)\n")
 		fmt.Printf("  - vaapi (Linux)\n")
@@ -129,12 +129,12 @@ func main() {
 			log.Fatal(fmt.Errorf("initializing hardware filter failed: %w", err))
 		}
 		ctx.useHardwareFilter = true
-		
+
 		// 更新编码器分辨率以匹配filter输出
 		if err := ctx.updateEncoderForFilter(); err != nil {
 			log.Fatal(fmt.Errorf("updating encoder for filter failed: %w", err))
 		}
-		
+
 		log.Printf("Hardware filter initialized: %s", *filterDesc)
 	} else {
 		// 没有filter的情况，直接打开编码器
@@ -193,7 +193,7 @@ func (ctx *HWTranscodeContext) getHwFormat(pixFmts []astiav.PixelFormat) astiav.
 			return pf
 		}
 	}
-	
+
 	fmt.Fprintf(os.Stderr, "Failed to get HW surface format.\n")
 	return astiav.PixelFormatNone
 }
@@ -251,9 +251,9 @@ func (ctx *HWTranscodeContext) openInputFile(filename string) error {
 	}
 
 	log.Printf("Input file opened: %s", filename)
-	log.Printf("Video stream: %dx%d, codec: %s", 
+	log.Printf("Video stream: %dx%d, codec: %s",
 		ctx.decoderCtx.Width(), ctx.decoderCtx.Height(), decoder.Name())
-	
+
 	return nil
 }
 
@@ -313,7 +313,7 @@ func (ctx *HWTranscodeContext) openOutputFile(filename, codecName string) error 
 	}
 
 	log.Printf("Output file opened: %s", filename)
-	log.Printf("Encoder: %s, %dx%d", encoder.Name(), 
+	log.Printf("Encoder: %s, %dx%d", encoder.Name(),
 		ctx.encoderCtx.Width(), ctx.encoderCtx.Height())
 
 	return nil
@@ -343,7 +343,7 @@ func (ctx *HWTranscodeContext) transcode() error {
 	}
 
 	frameCount := 0
-	
+
 	// 主转码循环
 	for {
 		// 读取包
@@ -522,21 +522,21 @@ func (ctx *HWTranscodeContext) createHardwareFramesContext() error {
 	if hwFramesCtx == nil {
 		return errors.New("failed to allocate hardware frames context")
 	}
-	
+
 	hwFramesCtx.SetHardwarePixelFormat(ctx.hwPixFmt)
 	hwFramesCtx.SetSoftwarePixelFormat(astiav.PixelFormatYuv420P)
 	hwFramesCtx.SetWidth(ctx.decoderCtx.Width())
 	hwFramesCtx.SetHeight(ctx.decoderCtx.Height())
 	hwFramesCtx.SetInitialPoolSize(20)
-	
+
 	if err := hwFramesCtx.Initialize(); err != nil {
 		return fmt.Errorf("initializing hardware frames context failed: %w", err)
 	}
-	
+
 	// 设置到解码器
 	ctx.decoderCtx.SetHardwareFramesContext(hwFramesCtx)
 	ctx.hwFramesCtx = hwFramesCtx
-	
+
 	return nil
 }
 
@@ -577,7 +577,7 @@ func (ctx *HWTranscodeContext) initHardwareFilter(filterDesc string) error {
 	buffersrcParams.SetHeight(ctx.decoderCtx.Height())
 	// 使用硬件像素格式 - 直接处理硬件帧
 	buffersrcParams.SetPixelFormat(ctx.hwPixFmt)
-	
+
 	// 使用输入流的时间基数
 	inputStream := ctx.inputFormatCtx.Streams()[ctx.videoStreamIdx]
 	timeBase := inputStream.TimeBase()
@@ -586,7 +586,7 @@ func (ctx *HWTranscodeContext) initHardwareFilter(filterDesc string) error {
 	}
 	buffersrcParams.SetTimeBase(timeBase)
 	buffersrcParams.SetSampleAspectRatio(ctx.decoderCtx.SampleAspectRatio())
-	
+
 	// 设置硬件帧上下文 - 关键！
 	if ctx.decoderCtx.HardwareFramesContext() != nil {
 		buffersrcParams.SetHardwareFramesContext(ctx.decoderCtx.HardwareFramesContext())
@@ -686,12 +686,12 @@ func (ctx *HWTranscodeContext) updateEncoderForFilter() error {
 	// 获取filter输出的分辨率
 	width := ctx.buffersinkCtx.Width()
 	height := ctx.buffersinkCtx.Height()
-	
+
 	if width > 0 && height > 0 {
 		// 重新设置编码器分辨率
 		ctx.encoderCtx.SetWidth(width)
 		ctx.encoderCtx.SetHeight(height)
-		
+
 		log.Printf("Updated encoder resolution to %dx%d based on filter output", width, height)
 	}
 

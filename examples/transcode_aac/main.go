@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 // 输出比特率 bit/s
@@ -251,7 +251,6 @@ func decodeAudioFrame(frame *astiav.Frame, inputFormatContext *astiav.FormatCont
 // convertSamples 转换音频样本格式
 // 使用ConvertFrame方法，更安全的实现
 
-
 // readDecodeConvertAndStore 读取、解码、转换并存储音频样本
 // 完全按照C代码的read_decode_convert_and_store函数实现
 func readDecodeConvertAndStore(fifo *astiav.AudioFifo, inputFormatContext *astiav.FormatContext, inputCodecContext *astiav.CodecContext, outputCodecContext *astiav.CodecContext, resampleContext *astiav.SoftwareResampleContext) (bool, error) {
@@ -273,28 +272,28 @@ func readDecodeConvertAndStore(fifo *astiav.AudioFifo, inputFormatContext *astia
 	// 如果有解码数据，转换并存储
 	if dataPresent {
 		// 强制进行重采样以验证接口
-		fmt.Printf("重采样验证: 输入 %dHz %s -> 输出 %dHz %s\n", 
+		fmt.Printf("重采样验证: 输入 %dHz %s -> 输出 %dHz %s\n",
 			inputFrame.SampleRate(), inputFrame.SampleFormat().String(),
 			outputCodecContext.SampleRate(), outputCodecContext.SampleFormat().String())
-		
+
 		// 创建输出帧用于重采样
 		outputFrame := astiav.AllocFrame()
 		defer outputFrame.Free()
-		
+
 		outputFrame.SetChannelLayout(outputCodecContext.ChannelLayout())
 		outputFrame.SetSampleFormat(outputCodecContext.SampleFormat())
 		outputFrame.SetSampleRate(outputCodecContext.SampleRate())
-		
+
 		// 使用ConvertFrame进行重采样 - 验证接口
 		if err := resampleContext.ConvertFrame(inputFrame, outputFrame); err != nil {
 			return false, fmt.Errorf("ConvertFrame failed: %w", err)
 		}
-		fmt.Printf("✓ 重采样接口验证成功: %dHz->%dHz, %d->%d样本\n", 
+		fmt.Printf("✓ 重采样接口验证成功: %dHz->%dHz, %d->%d样本\n",
 			inputFrame.SampleRate(), outputFrame.SampleRate(),
 			inputFrame.NbSamples(), outputFrame.NbSamples())
-		
+
 		fmt.Printf("重采样成功: %d样本 -> %d样本\n", inputFrame.NbSamples(), outputFrame.NbSamples())
-		
+
 		if outputFrame.NbSamples() > 0 {
 			if _, err := fifo.Write(outputFrame); err != nil {
 				return false, fmt.Errorf("could not write frame to FIFO: %w", err)
@@ -389,13 +388,13 @@ func loadEncodeAndWrite(fifo *astiav.AudioFifo, outputFormatContext *astiav.Form
 
 	// 从FIFO读取样本到输出帧
 	frameSize := outputCodecContext.FrameSize()
-	
+
 	// 从FIFO读取数据到输出帧
 	samplesRead, err := fifo.Read(outputFrame)
 	if err != nil {
 		return fmt.Errorf("could not read data from FIFO: %w", err)
 	}
-	
+
 	// 如果样本不足，调整帧大小
 	if samplesRead < frameSize {
 		fmt.Printf("FIFO样本不足: 读取%d，期望%d，调整帧大小\n", samplesRead, frameSize)
@@ -446,8 +445,6 @@ func main() {
 		}
 		outputFormatContext.Free()
 	}()
-
-
 
 	// 初始化重采样器
 	resampleContext, err := initResampler(inputCodecContext, outputCodecContext)

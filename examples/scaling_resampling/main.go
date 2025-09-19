@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/asticode/go-astiav"
+	"github.com/oldma3095/go-astiav"
 )
 
 func main() {
@@ -70,7 +70,7 @@ func demonstrateScaling() {
 		return
 	}
 
-	fmt.Printf("✓ 成功缩放帧: %dx%d -> %dx%d\n", 
+	fmt.Printf("✓ 成功缩放帧: %dx%d -> %dx%d\n",
 		srcFrame.Width(), srcFrame.Height(),
 		dstFrame.Width(), dstFrame.Height())
 }
@@ -144,12 +144,12 @@ func demonstrateResampling() {
 	outputFrame.SetSampleRate(48000)
 	outputFrame.SetNbSamples(1200) // 大约 1024 * 48000 / 44100
 
-	fmt.Printf("✓ 输入格式: %dHz, %s, %d样本\n", 
-		inputFrame.SampleRate(), 
+	fmt.Printf("✓ 输入格式: %dHz, %s, %d样本\n",
+		inputFrame.SampleRate(),
 		inputFrame.SampleFormat().String(),
 		inputFrame.NbSamples())
-	fmt.Printf("✓ 输出格式: %dHz, %s, %d样本\n", 
-		outputFrame.SampleRate(), 
+	fmt.Printf("✓ 输出格式: %dHz, %s, %d样本\n",
+		outputFrame.SampleRate(),
 		outputFrame.SampleFormat().String(),
 		outputFrame.NbSamples())
 
@@ -159,7 +159,7 @@ func demonstrateResampling() {
 		return
 	}
 
-	fmt.Printf("✓ 成功重采样: %dHz -> %dHz\n", 
+	fmt.Printf("✓ 成功重采样: %dHz -> %dHz\n",
 		inputFrame.SampleRate(), outputFrame.SampleRate())
 
 	// 测试延迟计算

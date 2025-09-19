@@ -1,4 +1,4 @@
-module github.com/asticode/go-astiav
+module github.com/oldma3095/go-astiav
 
 go 1.21
 

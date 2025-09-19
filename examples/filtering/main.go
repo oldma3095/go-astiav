@@ -7,8 +7,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/asticode/go-astiav"
 	"github.com/asticode/go-astikit"
+	"github.com/oldma3095/go-astiav"
 )
 
 var (
@@ -238,8 +238,8 @@ func openInputFile() (err error) {
 		s.decFrame = astiav.AllocFrame()
 		c.Add(s.decFrame.Free)
 
-		log.Printf("Video stream found: %dx%d, codec: %s, pixel format: %s", 
-			s.decCodecContext.Width(), s.decCodecContext.Height(), 
+		log.Printf("Video stream found: %dx%d, codec: %s, pixel format: %s",
+			s.decCodecContext.Width(), s.decCodecContext.Height(),
 			s.decCodec.Name(), s.decCodecContext.PixelFormat())
 
 		break
@@ -288,8 +288,8 @@ func initFilter() (err error) {
 	buffersrcParams.SetTimeBase(s.inputStream.TimeBase())
 	buffersrcParams.SetSampleAspectRatio(s.decCodecContext.SampleAspectRatio())
 
-	log.Printf("Buffersrc params: %dx%d, format: %s, timebase: %s", 
-		s.decCodecContext.Width(), s.decCodecContext.Height(), 
+	log.Printf("Buffersrc params: %dx%d, format: %s, timebase: %s",
+		s.decCodecContext.Width(), s.decCodecContext.Height(),
 		s.decCodecContext.PixelFormat(), s.inputStream.TimeBase())
 
 	if err = s.buffersrcContext.SetParameters(buffersrcParams); err != nil {
