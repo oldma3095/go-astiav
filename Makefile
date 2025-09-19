@@ -1,4 +1,4 @@
-version=n8.1
+version=n8.0
 srcPath=tmp/$(version)/src
 patchPath=
 platform=

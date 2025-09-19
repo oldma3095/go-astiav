@@ -6,7 +6,7 @@ package astiav
 */
 import "C"
 
-// https://github.com/FFmpeg/FFmpeg/blob/n8.1/libavcodec/defs.h#L65
+// https://github.com/FFmpeg/FFmpeg/blob/n8.0/libavcodec/defs.h#L65
 type Profile C.int
 
 const (

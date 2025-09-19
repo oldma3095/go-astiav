@@ -109,12 +109,12 @@ func (f *Frame) SetHeight(h int) {
 	f.c.height = C.int(h)
 }
 
-// https://github.com/FFmpeg/FFmpeg/blob/n8.1/libavutil/frame.h#L636
+// https://github.com/FFmpeg/FFmpeg/blob/n8.0/libavutil/frame.h#L636
 func (f *Frame) KeyFrame() bool {
 	return (f.c.flags & C.AV_FRAME_FLAG_KEY) != 0
 }
 
-// https://github.com/FFmpeg/FFmpeg/blob/n8.1/libavutil/frame.h#L636
+// https://github.com/FFmpeg/FFmpeg/blob/n8.0/libavutil/frame.h#L636
 func (f *Frame) SetKeyFrame(k bool) {
 	if k {
 		f.c.flags |= C.AV_FRAME_FLAG_KEY
@@ -282,7 +282,7 @@ func (f *Frame) Free() {
 	if f == nil || f.c == nil {
 		return
 	}
-	
+
 	// 完全按照FFmpeg C代码：av_frame_free会调用av_freep将指针设为NULL
 	C.av_frame_free(&f.c)
 	// av_frame_free内部会调用av_freep，将f.c设为NULL
@@ -311,7 +311,7 @@ func (f *Frame) FillAudioFrame(nbChannels int, sampleFmt SampleFormat, buf []byt
 	if len(buf) > 0 {
 		bufPtr = (*C.uint8_t)(unsafe.Pointer(&buf[0]))
 	}
-	return newError(C.astiavFillAudioFrame(f.c, C.int(nbChannels), C.enum_AVSampleFormat(sampleFmt), 
+	return newError(C.astiavFillAudioFrame(f.c, C.int(nbChannels), C.enum_AVSampleFormat(sampleFmt),
 		bufPtr, C.int(len(buf)), C.int(align)))
 }
 
@@ -343,8 +343,6 @@ func (f *Frame) UnsafePointer() unsafe.Pointer {
 func (f *Frame) IsWritable() bool {
 	return C.av_frame_is_writable(f.c) > 0
 }
-
-
 
 // https://ffmpeg.org/doxygen/8.0/group__lavu__frame.html#gaec4e92f6e1e75ffaf76e07586fb0c9ed
 func (f *Frame) Copy(dst *Frame) error {

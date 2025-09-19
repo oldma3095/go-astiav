@@ -39,12 +39,12 @@ func (f *Filter) String() string {
 	return f.Name()
 }
 
-// https://github.com/FFmpeg/FFmpeg/blob/n8.1/libavfilter/avfilter.h#L256
+// https://github.com/FFmpeg/FFmpeg/blob/n8.0/libavfilter/avfilter.h#L256
 func (f *Filter) NbInputs() int {
 	return int(C.avfilter_filter_pad_count(f.c, 0))
 }
 
-// https://github.com/FFmpeg/FFmpeg/blob/n8.1/libavfilter/avfilter.h#L256
+// https://github.com/FFmpeg/FFmpeg/blob/n8.0/libavfilter/avfilter.h#L256
 func (f *Filter) NbOutputs() int {
 	return int(C.avfilter_filter_pad_count(f.c, 1))
 }
